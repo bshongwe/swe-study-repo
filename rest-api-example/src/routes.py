@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """ Book routes module"""
 from flask import jsonify, request
-from app import app
+from src import app
 
 
 # Books array
