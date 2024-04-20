@@ -3,6 +3,7 @@
 from flask import jsonify, request
 from app import app
 
+
 # Books array
 books = [
     {"id": 1, "title": "Book 1", "author": "Author 1"},
