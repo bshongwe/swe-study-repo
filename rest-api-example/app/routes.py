@@ -23,3 +23,12 @@ def get_book(book_id):
     else:
         return jsonify({'error': 'Book not found'}), 404
 
+# Error handling for 404 Not Found error
+@app.errorhandler(404)
+def not_found_error(error):
+    return jsonify({'error': 'Not found'}), 404
+
+# Error handling for 400 Bad Request error
+@app.errorhandler(400)
+def bad_request_error(error):
+    return jsonify({'error': 'Bad request'}), 400
