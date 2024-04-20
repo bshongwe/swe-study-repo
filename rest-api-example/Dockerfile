@@ -7,7 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Set the working directory in the container
-WORKDIR /src
+WORKDIR /app
 
 # Copy requirements file into container at /src
 COPY requirements.txt .
