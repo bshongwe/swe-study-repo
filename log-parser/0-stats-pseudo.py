@@ -2,8 +2,8 @@
 """
 Module: Task 0 - parsing HTTP request logs.
 """
-
 import re
+
 
 def extract_input(input_line):
     """
@@ -55,9 +55,7 @@ def update_metrics(line, total_file_size, status_codes_stats):
 
 
 def run():
-    """
-    Starts the log parser.
-    """
+    """Starts the log parser."""
     # Initialize total file size and status code counts
     
     try:
