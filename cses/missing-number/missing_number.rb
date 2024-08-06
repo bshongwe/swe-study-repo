@@ -1,22 +1,19 @@
-def collatz_sequence(n)
-  sequence = []
-  while n != 1
-    sequence << n
-    if n.even?
-      n /= 2
-    else
-      n = n * 3 + 1
-    end
-  end
-  sequence << 1 # Finally append the last number, which is 1
-  sequence
+def find_missing_number(n, numbers)
+  sum_n = n * (n + 1) / 2
+  sum_given = numbers.sum
+  missing_number = sum_n - sum_given
+  missing_number
 end
 
 # Read input
-n = gets.strip.to_i
+input = $stdin.read.split.map(&:to_i)
 
-# Get the sequence
-result = collatz_sequence(n)
+# The first input line contains an integer n
+n = input[0]
 
-# Print the sequence
-puts result.join(" ")
+# The second line contains n-1 numbers
+numbers = input[1..-1]
+
+# Find and print the missing number
+missing_number = find_missing_number(n, numbers)
+puts missing_number
