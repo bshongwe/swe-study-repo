@@ -143,9 +143,7 @@
 ### **GCP gcloud Commands**
 | **Command** | **Description** |
 |-------------|-----------------|
-| `gcloud init`            
-
- | Initialize GCP and authenticate the account. |
+| `gcloud init` | Initialize GCP and authenticate the account. |
 | `gcloud compute instances list` | List all compute instances. |
 | `gcloud compute instances start <instance-name>` | Start a Compute Engine instance. |
 | `gcloud compute instances stop <instance-name>` | Stop a Compute Engine instance. |
