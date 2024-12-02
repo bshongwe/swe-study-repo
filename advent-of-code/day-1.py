@@ -53,7 +53,7 @@ def update_csv_with_distances(input_file_path, output_file_path):
 def main():
     """Main function to handle command-line args & process CSV files."""
     if len(sys.argv) != 3:
-        print("Usage: ./script_name.py <input_file.csv> <output_file.csv>")
+        print("Usage: ./day-1.py <input_file.csv> <output_file.csv>")
         sys.exit(1)
 
     input_file_path = get_absolute_path(sys.argv[1])
