@@ -40,9 +40,9 @@ def update_csv_with_distances(input_file_path, output_file_path):
     # Step 1: Read
     list1, list2 = read_lists_from_csv(input_file_path)
 
-    # Step 2: Sort in descending order
-    list1_sorted = sorted(list1, reverse=True)
-    list2_sorted = sorted(list2, reverse=True)
+    # Step 2: Sort in ascending order (smallest to largest)
+    list1_sorted = sorted(list1)  # Ascending order
+    list2_sorted = sorted(list2)  # Ascending order
 
     # Debugging: Print sorted lists to check order
     print("Sorted List A:", list1_sorted)
