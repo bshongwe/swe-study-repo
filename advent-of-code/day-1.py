@@ -41,10 +41,10 @@ def update_csv_with_distances(input_file_path, output_file_path):
     list1, list2 = read_lists_from_csv(input_file_path)
 
     # Step 2: Sort in ascending order (smallest to largest)
-    list1_sorted = sorted(list1)  # Ascending order
-    list2_sorted = sorted(list2)  # Ascending order
+    list1_sorted = sorted(list1)
+    list2_sorted = sorted(list2)
 
-    # Debugging: Print sorted lists to check order
+    # Just debugging: print sorted lists to check order
     print("Sorted List A:", list1_sorted)
     print("Sorted List B:", list2_sorted)
 
@@ -60,15 +60,15 @@ def update_csv_with_distances(input_file_path, output_file_path):
                 distance = abs(a - b)
                 total_distance += distance
 
-                # Debugging: Print individual distances
+                # Just debugging: print individual distances
                 print(f"Distance between {a} and {b} is {distance}")
 
                 writer.writerow([a, b, distance])
 
-            # Debugging: Print total distance
+            # Just debugging: print total distance
             print(f"Total Distance: {total_distance}")
 
-            # Write total distance
+            # Write total distance, total distance below the data
             writer.writerow([])  # Adds blank row
             writer.writerow(["Total Distance", total_distance])
 
@@ -82,7 +82,7 @@ def update_csv_with_distances(input_file_path, output_file_path):
 
 
 def main():
-    """Main function to handle command-line args & process CSV files."""
+    """Main func: handles command-line args & processes CSV files."""
     if len(sys.argv) != 3:
         print("Usage: ./day-1.py <input_file.csv> <output_file.csv>")
         sys.exit(1)
