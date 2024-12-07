@@ -19,7 +19,7 @@ def extract_and_compute_sum(memory_content):
 
 def process_memory_file(file_path):
     """
-    Process memory file to compute the sum of valid mul(X,Y) results.
+    Process memory file to compute sum of valid mul(X,Y) results.
 
     :param file_path: Path to memory file.
     :return: Sum of results from all valid mul(X,Y) instructions.
@@ -38,9 +38,9 @@ def process_memory_file(file_path):
 
 def main():
     """Main function to run corrupted memory analysis."""
-    # Path to input file
-    file_path = r"advent-of-code\day-3\input_file.csv"
-    file_path = os.path.abspath(file_path)
+    # Dynamically determine the directory where the script is located
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(script_dir, "input_file.csv")
 
     # Resolve and process file
     print("Starting corrupted memory analysis...")
