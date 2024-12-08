@@ -58,7 +58,7 @@ def solve(rules, updates):
 
     :param rules: List of tuples (X, Y) where X must be printed before Y.
     :param updates: List of updates, each being a list of page numbers.
-    :return: Total sum of the middle page numbers for valid updates.
+    :return: Total sum of middle page numbers for valid updates.
     """
     total = 0
 
@@ -90,8 +90,8 @@ if __name__ == "__main__":
     # Print current working directory for debugging
     print("Current working directory:", os.getcwd())
 
-    # File path to CSV
-    file_path = r"advent-of-code/day-5/input_file.csv"
+    # Update file path to reference just the file name
+    file_path = "input_file.csv"
     
     try:
         # Parse file and calculate result
