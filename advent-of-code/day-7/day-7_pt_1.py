@@ -6,25 +6,24 @@ from itertools import product
 
 
 def read_equations(file_path):
-    """Reads equations from a CSV file and returns them as a list."""
+    """Reads equations from CSV file and returns them as list."""
     equations = []
     with open(file_path, "r") as file:
         csv_reader = csv.reader(file)
         for row in csv_reader:
-            target = int(row[0])
-            numbers = list(map(int, row[1].strip().split()))
-            equations.append((target, numbers))
+            # Split on ':' to extract the target and numbers
+            if len(row) == 1:
+                parts = row[0].split(":")
+                target = int(parts[0].strip())
+                numbers = list(map(int, parts[1].strip().split()))
+                equations.append((target, numbers))
+            else:
+                raise ValueError(f"Unexpected row format: {row}")
     return equations
 
 
 def evaluate_expression(numbers, operators):
-    """
-    Evaluate expression left-to-right using numbers and operators.
-
-    :param numbers: List of integers.
-    :param operators: List of operators ('+' or '*').
-    :return: Result of the evaluation.
-    """
+    """Evaluate expression left-to-right using numbers and operators."""
     result = numbers[0]
     for i in range(len(operators)):
         if operators[i] == "+":
@@ -36,10 +35,7 @@ def evaluate_expression(numbers, operators):
 
 def find_valid_equations(equations):
     """
-    Determines which equations can be made valid and calculates the total result.
-
-    :param equations: List of tuples with target and numbers.
-    :return: Tuple (total result, list of valid equations).
+    Determines which equations can be made valid and calculates total result.
     """
     total_result = 0
     valid_equations = []
@@ -48,7 +44,6 @@ def find_valid_equations(equations):
         num_operators = len(numbers) - 1
         valid = False
 
-        # Generate all possible combinations of operators
         for operators in product("+-*", repeat=num_operators):
             if evaluate_expression(numbers, operators) == target:
                 valid = True
@@ -62,7 +57,7 @@ def find_valid_equations(equations):
 
 
 if __name__ == "__main__":
-    # Absolute path to the input CSV file
+    # Absolute path to input CSV file
     file_path = os.path.abspath("input_file.csv")
 
     # Read equations from the CSV file
