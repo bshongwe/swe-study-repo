@@ -107,7 +107,7 @@ def calculate_antinodes_part2(lines):
                         unique_antinodes.add(antinode2)
                         valid = True
                     
-                    if not valid:  # Stop when neither antinode is valid
+                    if not valid:
                         break
                     k += 1
 
@@ -116,7 +116,7 @@ def calculate_antinodes_part2(lines):
 
 def main():
     """
-    Main function to compute the unique antinodes count for Part 1 and Part 2.
+    Main function: call Part 1 and Part 2 unique antinodes count func
     """
     script_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(script_dir, "input_file.csv")
