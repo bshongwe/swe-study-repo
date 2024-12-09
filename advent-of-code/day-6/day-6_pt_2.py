@@ -1,142 +1,125 @@
 #!/usr/bin/env python3
-import os
-import logging
+
 import csv
+import os
 
 
 def read_map(file_path):
-    """
-    Reads map grid from a CSV file.
-
-    :param file_path: Path to CSV file.
-    :return: List of lists representing map grid.
-    """
-    map_grid = []
-    try:
-        with open(file_path, mode="r", newline="") as file:
-            csv_reader = csv.reader(file)
-            for row in csv_reader:
-                map_grid.append(list("".join(row)))
-    except FileNotFoundError:
-        logging.error(f"File not found: {file_path}. Please check the file path.")
-        raise
-    except Exception as e:
-        logging.error(f"An error occurred while reading the file: {e}")
-        raise
-    return map_grid
+    """Reads map from a given CSV file and returns it as a grid."""
+    with open(file_path, "r") as file:
+        csv_reader = csv.reader(file)
+        return [list(row[0]) for row in csv_reader]
 
 
-def simulate_guard(grid, guard_position, guard_direction):
-    """
-    Simulates guard's patrol and calculates distinct positions visited.
-
-    :param grid: List of lists representing map grid.
-    :param guard_position: Starting position of guard.
-    :param guard_direction: Initial direction guard is facing.
-    :return: Set of distinct positions visited by guard.
-    """
-    # Direction deltas: down, right, up, left
+def simulate_guard(grid):
+    """Simulates guard's movement and returns number of visited positions."""
     directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+
+    # Find guard's starting position and direction
+    guard_position = None
+    current_direction = None
+    for row in range(len(grid)):
+        for col in range(len(grid[0])):
+            if grid[row][col] in "^>v<":
+                guard_position = (row, col)
+                current_direction = "^>v<".index(grid[row][col])
+                break
+        if guard_position:
+            break
 
     visited_positions = set([guard_position])
     rows, cols = len(grid), len(grid[0])
 
     while True:
-        # Calculate next position
         row, col = guard_position
-        dy, dx = directions[guard_direction]
+        dy, dx = directions[current_direction]
         next_position = (row + dy, col + dx)
 
         # Stop if guard leaves grid
         if not (0 <= next_position[0] < rows and 0 <= next_position[1] < cols):
             break
 
-        # Check if next position is blocked
+        # Check if the next position is blocked
         if grid[next_position[0]][next_position[1]] == "#":
-            guard_direction = (guard_direction + 1) % 4
+            current_direction = (current_direction + 1) % 4
         else:
             guard_position = next_position
-            if guard_position in visited_positions:
-                # If guard revisits a position, it is stuck in a loop
-                return visited_positions
             visited_positions.add(guard_position)
 
-    return visited_positions
+    return len(visited_positions), visited_positions
 
 
-def find_possible_obstruction_positions(grid, guard_position, guard_direction):
+def find_all_loop_positions(grid, visited_positions):
     """
-    Finds all possible positions where a new obstruction can be placed to trap guard in a loop.
-
-    :param grid: List of lists representing map grid.
-    :param guard_position: Current position of guard.
-    :param guard_direction: Current direction guard is facing.
-    :return: A list of possible positions to place obstruction.
+    Finds all positions where adding an obstruction causes
+    guard to get stuck in loop.
     """
-    possible_positions = []
+    directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 
-    # Iterate over all positions in the grid
-    for row in range(len(grid)):
-        for col in range(len(grid[0])):
-            # Skip guard's starting position
-            if (row, col) == guard_position:
-                continue
-
-            # Only consider empty spaces where a new obstruction can be placed
-            if grid[row][col] == ".":
-                # Temporarily place the obstruction
-                grid[row][col] = "O"
-
-                # Simulate the guard's movement with the new obstruction
-                visited_positions = simulate_guard(grid, guard_position, guard_direction)
-
-                # If guard gets stuck in a loop, it is a valid obstruction position
-                if len(visited_positions) < len(set([guard_position])):
-                    possible_positions.append((row, col))
-
-                # Remove obstruction after testing this position
-                grid[row][col] = "."
-
-    return possible_positions
-
-
-def main():
-    # Configure logging
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-
-    # Print current working directory for debugging
-    current_dir = os.getcwd()
-    logging.info(f"Current working directory: {current_dir}")
-
-    # File path relative to current working directory
-    file_path = os.path.join(current_dir, "input_file.csv")
-
-    try:
-        # Read map and find guard's position and direction
-        grid = read_map(file_path)
-        guard_position = None
-        guard_direction = None
-
-        for row in range(len(grid)):
-            for col in range(len(grid[0])):
-                if grid[row][col] in "^>v<":
-                    guard_position = (row, col)
-                    guard_direction = "^>v<".index(grid[row][col])
-                    break
-            if guard_position:
+    # Find guard's starting position and direction
+    guard_position = None
+    guard_direction = None
+    for y, row in enumerate(grid):
+        for x, cell in enumerate(row):
+            if cell in "^>v<":
+                guard_position = (y, x)
+                guard_direction = "^>v<".index(cell)
                 break
+        if guard_position:
+            break
 
-        # Find possible obstruction positions
-        obstruction_positions = find_possible_obstruction_positions(grid, guard_position, guard_direction)
+    def causes_loop(obstruction_pos):
+        """Checks if placing obstruction at position causes guard to loop."""
+        direction_now = guard_direction
+        guard_pos = guard_position
+        visited_with_direction = set([(guard_pos, direction_now)])
 
-        # Log result
-        logging.info(f"Number of valid obstruction positions: {len(obstruction_positions)}")
+        if grid[obstruction_pos[0]][obstruction_pos[1]] == "#":
+            return False
 
-    except FileNotFoundError:
-        logging.error(f"File not found: {file_path}. Please check the file path.")
-    except Exception as e:
-        logging.error(f"An error occurred: {e}")
+        grid[obstruction_pos[0]][obstruction_pos[1]] = "#"
+        rows, cols = len(grid), len(grid[0])
+
+        while True:
+            y, x = guard_pos
+            dy, dx = directions[direction_now]
+            next_position = (y + dy, x + dx)
+
+            if not (0 <= next_position[0] < rows and 0 <= next_position[1] < cols):
+                grid[obstruction_pos[0]][obstruction_pos[1]] = "."
+                return False
+
+            if grid[next_position[0]][next_position[1]] == "#":
+                direction_now = (direction_now + 1) % 4
+            else:
+                guard_pos = next_position
+
+            state = (guard_pos, direction_now)
+            if state in visited_with_direction:
+                grid[obstruction_pos[0]][obstruction_pos[1]] = "."
+                return True
+
+            visited_with_direction.add(state)
+
+    loop_positions = []
+    for pos in visited_positions:
+        if pos != guard_position and causes_loop(pos):
+            loop_positions.append(pos)
+
+    return loop_positions
 
 
 if __name__ == "__main__":
-    main()
+    # Absolute input CSV file path
+    file_path = os.path.abspath("input_file.csv")
+
+    # Read the map from the CSV file
+    grid = read_map(file_path)
+
+    # Part 1: Simulate guard's movement
+    part_1_result, visited_positions = simulate_guard(grid)
+    print(f"Part 1: {part_1_result}")
+
+    # Part 2: Find positions causing loops
+    loop_positions = find_all_loop_positions(grid, visited_positions)
+    print(f"Part 2: {len(loop_positions)}")
