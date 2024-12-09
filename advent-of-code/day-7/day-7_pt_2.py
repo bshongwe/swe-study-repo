@@ -16,8 +16,8 @@ def read_equations(file_path):
         for row in reader:
             # Split the row at the first colon and strip excess spaces
             target, numbers_str = row[0].strip().split(":")
-            target = int(target.strip())  # Convert the target to an integer
-            numbers = list(map(int, numbers_str.strip().split()))  # Convert the numbers to integers
+            target = int(target.strip())
+            numbers = list(map(int, numbers_str.strip().split()))
             equations.append((target, numbers))
     return equations
 
@@ -80,7 +80,7 @@ def evaluate_part1(equations):
 
 
 def main():
-    file_path = get_absolute_path("input_file.csv")  # Dynamically get the absolute path of the CSV file
+    file_path = get_absolute_path("input_file.csv")
     equations = read_equations(file_path)
 
     # Part 1: Valid equations using only + and *
