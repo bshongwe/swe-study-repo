@@ -4,12 +4,12 @@
 import os
 
 def read_disk_map(file_path):
-    """Read the disk map from a CSV file."""
+    """Read disk map from CSV file."""
     with open(file_path, "r") as file:
         return file.read().strip()
 
 def parse_disk_map(disk_map):
-    """Parse the disk map into file and free space segments."""
+    """Parse disk map into file and free space segments."""
     disk_segments = []
     for i in range(0, len(disk_map), 2):
         file_length = int(disk_map[i])
@@ -20,7 +20,7 @@ def parse_disk_map(disk_map):
     return disk_segments
 
 def build_disk_representation(disk_segments):
-    """Build the initial disk representation."""
+    """Build initial disk representation."""
     blocks = []
     file_id = 0
     for segment, length in disk_segments:
@@ -32,7 +32,7 @@ def build_disk_representation(disk_segments):
     return blocks
 
 def compact_disk(blocks):
-    """Compact the disk by moving files to the left."""
+    """Compact disk by moving files to left."""
     left_walker, right_walker = 0, len(blocks) - 1
     while left_walker < right_walker:
         while left_walker < len(blocks) and blocks[left_walker] != ".":
@@ -46,7 +46,7 @@ def compact_disk(blocks):
     return blocks
 
 def calculate_checksum(blocks):
-    """Calculate the filesystem checksum."""
+    """Calculate filesystem checksum."""
     checksum = 0
     for i, block in enumerate(blocks):
         if block != ".":
@@ -54,12 +54,12 @@ def calculate_checksum(blocks):
     return checksum
 
 def main():
-    """Main function to execute the disk compaction and checksum calculation."""
+    """Main function to execute disk compaction and checksum calculation."""
     file_name = "input_file.csv"
     file_path = os.path.join(os.getcwd(), file_name)
 
     if not os.path.exists(file_path):
-        print(f"Error: File '{file_name}' not found in the current directory.")
+        print(f"Error: File '{file_name}' not found in current directory.")
         return
 
     disk_map = read_disk_map(file_path)

@@ -4,7 +4,7 @@
 import os
 
 def read_disk_map(file_name):
-    """Read and parse the disk map from a CSV file."""
+    """Read and parse disk map from CSV."""
     file_path = os.path.join(os.getcwd(), file_name)
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"File not found: {file_path}")
@@ -15,7 +15,7 @@ def read_disk_map(file_name):
     return disk_map
 
 def parse_disk_segments(disk_map):
-    """Parse the disk map into segments."""
+    """Parse disk map into segments."""
     disk_segments = []
     for i in range(0, len(disk_map), 2):
         file_length = int(disk_map[i])
@@ -26,9 +26,9 @@ def parse_disk_segments(disk_map):
     return disk_segments
 
 def build_disk_representation(disk_segments):
-    """Build the initial disk representation."""
+    """Build initial disk representation."""
     blocks = []
-    file_positions = []  # Metadata for each file: its start position, length, and ID
+    file_positions = []
     file_id = 0
     pos = 0
 
@@ -45,7 +45,7 @@ def build_disk_representation(disk_segments):
     return blocks, file_positions
 
 def compact_disk_part1(blocks):
-    """Compact the disk for Part 1 by moving blocks individually."""
+    """Compact disk for Part 1 by moving blocks individually."""
     left_walker, right_walker = 0, len(blocks) - 1
 
     while left_walker < right_walker:
@@ -59,7 +59,7 @@ def compact_disk_part1(blocks):
     return calculate_checksum(blocks)
 
 def compact_disk_part2(blocks, file_positions):
-    """Compact the disk for Part 2 by moving whole files."""
+    """Compact disk for Part 2 by moving whole files."""
     # Aggregate free spaces into a list of tuples
     free_spaces = []
     current_pos = 0
@@ -90,7 +90,7 @@ def compact_disk_part2(blocks, file_positions):
     return calculate_checksum(blocks)
 
 def calculate_checksum(blocks):
-    """Calculate the checksum of the disk blocks."""
+    """Calculate checksum of disk blocks."""
     checksum = 0
     for i, block in enumerate(blocks):
         if block is not None:
@@ -98,7 +98,7 @@ def calculate_checksum(blocks):
     return checksum
 
 def main():
-    """Main function to execute both parts of the challenge."""
+    """Main function to execute both parts of challenge."""
     file_name = "input_file.csv"
     disk_map = read_disk_map(file_name)
     disk_segments = parse_disk_segments(disk_map)
