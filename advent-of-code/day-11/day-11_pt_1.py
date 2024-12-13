@@ -4,9 +4,6 @@
 import csv
 
 
-import csv
-
-
 def read_stones(file_path):
     """
     Read the list of initial stones from a file.
@@ -26,7 +23,7 @@ def transform_stones(stones):
     for stone in stones:
         if stone == 0:
             new_stones.append(1)
-        elif len(str(stone)) % 2 == 0:  # Even number of digits
+        elif len(str(stone)) % 2 == 0:
             half_len = len(str(stone)) // 2
             left = int(str(stone)[:half_len])
             right = int(str(stone)[half_len:])
@@ -50,7 +47,7 @@ def main():
     """
     Main execution flow.
     """
-    file_path = "input_file.csv"  # Input file path
+    file_path = "input_file.csv"
     blinks = 25  # Number of blinks to simulate
 
     # Read initial stones from CSV
