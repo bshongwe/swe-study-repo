@@ -6,34 +6,38 @@ Script reads CSV file containing garden map, identifies regions of same plant
 type, calculates area and perimeter, and determines total fencing cost.
 """
 
-import csv
 
 def parse_input(file_path):
     """
-    Parse the garden map from a CSV file.
+    Parse garden map from a CSV file.
 
     Args:
-        file_path (str): Path to the input CSV file.
+        file_path (str): Path to input CSV file.
 
     Returns:
-        list[list[str]]: 2D list representing the garden map.
+        list[list[str]]: 2D list representing garden map.
     """
-    with open(file_path, 'r') as file:
-        reader = csv.reader(file)
-        return [list(row[0]) for row in reader]
+    garden_map = []
+    with open(file_path, "r") as file:
+        for line in file:
+            garden_map.append(list(line.strip()))
+    print("Parsed Garden Map:")
+    for row in garden_map:
+        print(row)
+    return garden_map
 
 def flood_fill(grid, x, y, plant_type):
     """
-    Perform a flood fill to find all connected cells of the same plant type.
+    Perform a flood fill to find all connected cells of same plant type.
 
     Args:
-        grid (list[list[str]]): 2D list representing the garden map.
-        x (int): Row index of the starting cell.
-        y (int): Column index of the starting cell.
-        plant_type (str): The type of plant to search for.
+        grid (list[list[str]]): 2D list representing garden map.
+        x (int): Row index of starting cell.
+        y (int): Column index of starting cell.
+        plant_type (str): Type of plant to search for.
 
     Returns:
-        tuple[int, int]: Area and perimeter of the region.
+        tuple[int, int]: Area and perimeter of region.
     """
     rows, cols = len(grid), len(grid[0])
     stack = [(x, y)]
@@ -43,10 +47,7 @@ def flood_fill(grid, x, y, plant_type):
     while stack:
         cx, cy = stack.pop()
 
-        if not (0 <= cx < rows and 0 <= cy < cols):
-            continue
-
-        if grid[cx][cy] != plant_type:
+        if not (0 <= cx < rows and 0 <= cy < cols) or grid[cx][cy] != plant_type:
             continue
 
         grid[cx][cy] = None
@@ -62,6 +63,8 @@ def flood_fill(grid, x, y, plant_type):
 
         perimeter += edges
 
+    print(f"Flood-fill found plant {plant_type} at ({x}, {y}) -> "
+          f"Area: {area}, Perimeter: {perimeter}")
     return area, perimeter
 
 def calculate_total_price(grid):
@@ -81,15 +84,19 @@ def calculate_total_price(grid):
             if grid[x][y]:
                 plant_type = grid[x][y]
                 area, perimeter = flood_fill(grid, x, y, plant_type)
-                total_price += area * perimeter
+                price = area * perimeter
+                print(f"Region Plant Type: {plant_type}, Area: {area}, "
+                      f"Perimeter: {perimeter}, Price: {price}")
+                total_price += price
 
+    print(f"Final Total Price: {total_price}")
     return total_price
 
 def main():
     """
     Main function to execute the script.
 
-    Reads the input file, calculates the total fencing cost, and prints the result.
+    Reads the input file, calculates the total fencing cost, and prints result.
     """
     file_path = 'input_file.csv'
     garden_map = parse_input(file_path)
