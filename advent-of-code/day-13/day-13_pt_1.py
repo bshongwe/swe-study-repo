@@ -4,7 +4,6 @@ import csv
 import sys
 from sympy import symbols, Eq, diophantine
 
-
 def parse_input(file_path):
     """Parse CSV file to extract machine configs."""
     machines = []
@@ -19,7 +18,6 @@ def parse_input(file_path):
             machines.append(((Ax, Ay), (Bx, By), (Px, Py)))
     return machines
 
-
 def find_min_cost(Ax, Ay, Bx, By, Px, Py):
     """Solve equations to find minimum cost."""
     x, y = symbols("x y", integer=True)
@@ -32,12 +30,19 @@ def find_min_cost(Ax, Ay, Bx, By, Px, Py):
     solutions_x = diophantine(eq_x)
     solutions_y = diophantine(eq_y)
 
+    # Debugging: Show solutions
+    print(f"Solutions for X equation: {solutions_x}")
+    print(f"Solutions for Y equation: {solutions_y}")
+
     # Match solutions for valid (x, y) pairs
     valid_solutions = []
     for sx in solutions_x:
         for sy in solutions_y:
             if sx == sy and sx[0] >= 0 and sx[1] >= 0:
-                valid_solutions.append(sx)
+                valid_solutions.append((sx[0], sx[1]))
+
+    # Debugging: Show valid solutions
+    print(f"Valid solutions: {valid_solutions}")
 
     if not valid_solutions:
         return float("inf"), None
@@ -53,7 +58,6 @@ def find_min_cost(Ax, Ay, Bx, By, Px, Py):
 
     return min_cost, best_solution
 
-
 def main():
     # Read file path from command-line arg
     input_file = sys.argv[1] if len(sys.argv) > 1 else "input_file.csv"
@@ -64,6 +68,11 @@ def main():
 
     for i, machine in enumerate(machines):
         (Ax, Ay), (Bx, By), (Px, Py) = machine
+        print(f"\nProcessing Machine {i + 1}:")
+        print(f"Button A: X+{Ax}, Y+{Ay}")
+        print(f"Button B: X+{Bx}, Y+{By}")
+        print(f"Prize: X={Px}, Y={Py}")
+
         cost, solution = find_min_cost(Ax, Ay, Bx, By, Px, Py)
         if cost != float("inf"):
             prizes_won += 1
@@ -72,9 +81,8 @@ def main():
         else:
             print(f"Machine {i + 1}: No solution")
 
-    print(f"Total Prizes Won: {prizes_won}")
+    print(f"\nTotal Prizes Won: {prizes_won}")
     print(f"Minimum Total Cost: {total_cost}")
-
 
 if __name__ == "__main__":
     main()
