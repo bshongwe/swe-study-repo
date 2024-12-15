@@ -1,88 +1,55 @@
 #!/usr/bin/env python3
 
-import csv
-import sys
-from sympy import symbols, Eq, diophantine
 
-def parse_input(file_path):
-    """Parse CSV file to extract machine configs."""
-    machines = []
-    with open(file_path, 'r') as f:
-        reader = csv.reader(f)
-        for row in reader:
-            if len(row) < 7:
-                continue
-            Ax, Ay = int(row[0]), int(row[1])
-            Bx, By = int(row[2]), int(row[3])
-            Px, Py = int(row[4]), int(row[5])
-            machines.append(((Ax, Ay), (Bx, By), (Px, Py)))
-    return machines
+import re
 
-def find_min_cost(Ax, Ay, Bx, By, Px, Py):
-    """Solve equations to find minimum cost."""
-    x, y = symbols("x y", integer=True)
 
-    # Define equations
-    eq_x = Eq(Ax * x + Bx * y, Px)
-    eq_y = Eq(Ay * x + By * y, Py)
+def process_machine(block):
+    """
+    Process single claw machine's config, calculate the token cost
+    if prize can be won.
 
-    # Solve equations for x and y
-    solutions_x = diophantine(eq_x)
-    solutions_y = diophantine(eq_y)
+    Args:
+        block (str): Claw machine config block.
 
-    # Debugging: Show solutions
-    print(f"Solutions for X equation: {solutions_x}")
-    print(f"Solutions for Y equation: {solutions_y}")
+    Returns:
+        int: Token cost to win prize for machine, or 0 if not possible.
+    """
+    ax, ay, bx, by, px, py = map(int, re.findall(r"\d+", block))
+    denominator = ax * by - ay * bx
 
-    # Match solutions for valid (x, y) pairs
-    valid_solutions = []
-    for sx in solutions_x:
-        for sy in solutions_y:
-            if sx == sy and sx[0] >= 0 and sx[1] >= 0:
-                valid_solutions.append((sx[0], sx[1]))
+    if denominator == 0:
+        return 0
 
-    # Debugging: Show valid solutions
-    print(f"Valid solutions: {valid_solutions}")
+    ca = (px * by - py * bx) / denominator
+    cb = (px - ax * ca) / bx
 
-    if not valid_solutions:
-        return float("inf"), None
+    if ca % 1 == 0 and cb % 1 == 0 and ca <= 100 and cb <= 100:
+        return int(ca * 3 + cb)
 
-    # Calculate cost for each valid solution
-    min_cost = float("inf")
-    best_solution = None
-    for sol in valid_solutions:
-        cost = 3 * sol[0] + sol[1]
-        if cost < min_cost:
-            min_cost = cost
-            best_solution = sol
+    return 0
 
-    return min_cost, best_solution
 
 def main():
-    # Read file path from command-line arg
-    input_file = sys.argv[1] if len(sys.argv) > 1 else "input_file.csv"
-    machines = parse_input(input_file)
+    """
+    Main function to calculate total tokens needed to win all possible prizes.
+    """
+    input_file = "input_file.csv"
+    total_tokens = 0
 
-    total_cost = 0
-    prizes_won = 0
+    try:
+        with open(input_file, "r") as file:
+            data = file.read()
 
-    for i, machine in enumerate(machines):
-        (Ax, Ay), (Bx, By), (Px, Py) = machine
-        print(f"\nProcessing Machine {i + 1}:")
-        print(f"Button A: X+{Ax}, Y+{Ay}")
-        print(f"Button B: X+{Bx}, Y+{By}")
-        print(f"Prize: X={Px}, Y={Py}")
+        for block in data.strip().split("\n\n"):
+            total_tokens += process_machine(block)
 
-        cost, solution = find_min_cost(Ax, Ay, Bx, By, Px, Py)
-        if cost != float("inf"):
-            prizes_won += 1
-            total_cost += cost
-            print(f"Machine {i + 1}: Solution = {solution}, Cost = {cost}")
-        else:
-            print(f"Machine {i + 1}: No solution")
+    except FileNotFoundError:
+        print(f"Error: Input file '{input_file}' not found.")
+        return
 
-    print(f"\nTotal Prizes Won: {prizes_won}")
-    print(f"Minimum Total Cost: {total_cost}")
+    print(total_tokens)
+
 
 if __name__ == "__main__":
     main()
