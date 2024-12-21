@@ -20,6 +20,7 @@ def parse_input(file_path):
         for row in reader:
             try:
                 print(f"Parsing row: {row}")  # Debug print statement
+                # Adjust the parsing logic to correctly extract position and velocity
                 p_part, v_part = row[0].split(" v=")
                 px, py = map(int, p_part[2:].split(","))
                 vx, vy = map(int, v_part.split(","))
