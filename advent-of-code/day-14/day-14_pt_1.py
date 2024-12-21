@@ -21,9 +21,11 @@ def parse_input(file_path):
             try:
                 print(f"Parsing row: {row}")  # Debug print statement
                 # Adjust the parsing logic to correctly extract position and velocity
-                p_part, v_part = row[0].split(" v=")
-                px, py = map(int, p_part[2:].split(","))
-                vx, vy = map(int, v_part.split(","))
+                p_part, v_part = row[0].split(" ")
+                p_values = p_part.split("=")[1].split(",")
+                v_values = v_part.split("=")[1].split(",")
+                px, py = map(int, p_values)
+                vx, vy = map(int, v_values)
                 robots.append({"position": [px, py], "velocity": [vx, vy]})
             except (ValueError, IndexError) as e:
                 print(f"Skipping malformed row: {row} (Error: {e})")
