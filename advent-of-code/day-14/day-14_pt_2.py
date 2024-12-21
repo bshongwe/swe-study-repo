@@ -35,14 +35,13 @@ def main():
             # Append parsed robot data (position and velocity) to robots list
             robots.append([Px, Py, Vx, Vy])
 
-    # --- Part 1 ---
     # Initialize counters for 4 quadrants
     q1 = 0
     q2 = 0
     q3 = 0
     q4 = 0
 
-    # Process each robot's data & calculate new position
+    # Process each robot's data & calculate new position (at time=100)
     for i in range(len(robots)):
         Px, Py, Vx, Vy = robots[i]
         
@@ -67,41 +66,58 @@ def main():
         elif new_Px > vertical_middle and new_Py > horizontal_middle:
             q4 += 1
 
-    # Calculate final answer for Part 1: multiplying quadrant counts
-    part1_answer = q1 * q2 * q3 * q4
+    # Calculate final answer (multiply quadrant counts)
+    answer = q1 * q2 * q3 * q4
     
-    # Output Part 1 result
-    print(f"Part 1 Answer: {part1_answer}")
+    # Output result for the first part
+    print("Answer for the first part:", answer)
 
-    # --- Part 2 ---
-    # Define the Christmas tree shape (this is an assumption; adjust based on actual challenge description)
-    christmas_tree_shape = set([
-        (50, 0), (51, 1), (49, 1), (52, 2), (48, 2), (53, 3), (47, 3), (54, 4), (46, 4),
-        (45, 5), (55, 5), (44, 6), (56, 6), (43, 7), (57, 7), (42, 8), (58, 8), (41, 9)
-    ])
+    # Part 2: We want to find the smallest safety factor after a given time period
+    smallest_answer = 999999999999
+    found_at_second = 0
 
-    # Run simulation for up to 1000 seconds or until robots form the tree
-    max_seconds = 1000
-    for t in range(max_seconds):
-        # Update robot positions based on their velocities
-        new_positions = set()
-        for Px, Py, Vx, Vy in robots:
-            new_Px = Px + Vx * t
-            new_Py = Py + Vy * t
+    # Loop through all possible seconds (WIDE * TALL time steps)
+    for second in range(WIDE * TALL):  # pattern will repeat every WIDE * TALL times
+        q1 = 0
+        q2 = 0
+        q3 = 0
+        q4 = 0
+        final_grid = [[0] * WIDE for _ in range(TALL)]
+
+        # Process each robot's position after `second` units of time
+        for i in range(len(robots)):
+            Px, Py, Vx, Vy = robots[i]
+            new_Py, new_Px = (Px + Vx * second), (Py + Vy * second)
             
-            # Apply modulo operation to keep new position within grid bounds
-            new_Px, new_Py = new_Px % WIDE, new_Py % TALL
+            # Apply modulo operation to keep new position within grid bounds (swap X and Y coordinates)
+            new_Px, new_Py = new_Px % TALL, new_Py % WIDE
             
-            # Add the new position to the set of positions
-            new_positions.add((new_Px, new_Py))
+            final_grid[new_Px][new_Py] += 1
+
+            vertical_middle = WIDE // 2
+            horizontal_middle = TALL // 2
+
+            # Determine which quadrant the robot is in
+            if new_Px < vertical_middle and new_Py < horizontal_middle:
+                q1 += 1
+            if new_Px > vertical_middle and new_Py < horizontal_middle:
+                q2 += 1
+            if new_Px < vertical_middle and new_Py > horizontal_middle:
+                q3 += 1
+            if new_Px > vertical_middle and new_Py > horizontal_middle:
+                q4 += 1
+
+        # Calculate the safety factor (multiplication of quadrant counts)
+        answer = q1 * q2 * q3 * q4
         
-        # Check if the current positions match the Christmas tree shape
-        if new_positions == christmas_tree_shape:
-            print(f"Part 2 Answer: The robots form a Christmas tree at second {t}.")
-            break
-    else:
-        # If no solution found within the max seconds
-        print("Part 2 Answer: The robots did not form a Christmas tree within the time limit.")
+        # If the answer is smaller than the current smallest, update it
+        if answer < smallest_answer:
+            smallest_answer = answer
+            found_at_second = second
+
+    # Output result for the second part
+    print("Found smallest safety factor:", smallest_answer)
+    print("At second:", found_at_second)
 
 # Call the main function
 if __name__ == "__main__":
