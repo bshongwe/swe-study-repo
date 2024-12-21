@@ -6,10 +6,12 @@ This script simulates robot movements to calculate the safety factor.
 """
 import csv
 import os
+import sys
 
 def parse_input(file_path):
     """Parse the input CSV file into a list of robots with positions and velocities."""
     robots = []
+    malformed_rows = []
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Input file '{file_path}' does not exist.")
 
@@ -17,15 +19,21 @@ def parse_input(file_path):
         reader = csv.reader(file)
         for row in reader:
             try:
+                print(f"Parsing row: {row}")  # Debug print statement
+                # Adjust the parsing logic to correctly extract position and velocity
                 p_part, v_part = row[0].split(" v=")
                 px, py = map(int, p_part[2:].split(","))
                 vx, vy = map(int, v_part.split(","))
                 robots.append({"position": [px, py], "velocity": [vx, vy]})
-            except ValueError as e:
+            except (ValueError, IndexError) as e:
                 print(f"Skipping malformed row: {row} (Error: {e})")
+                malformed_rows.append(row)
     
     if not robots:
         raise ValueError("No valid robot data found in the input file.")
+
+    if malformed_rows:
+        print(f"Total malformed rows skipped: {len(malformed_rows)}")
 
     return robots
 
@@ -62,8 +70,12 @@ def calculate_safety_factor(quadrants):
 
 def main():
     """Main function to execute the program."""
-    # File path for the input CSV
-    input_file = "input_file.csv"
+    # Check for command-line arguments
+    if len(sys.argv) != 2:
+        print("Usage: ./day-14_pt_1.py <input_file.csv>")
+        sys.exit(1)
+
+    input_file = sys.argv[1]
 
     # Grid dimensions
     width = 101
