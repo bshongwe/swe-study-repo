@@ -43,6 +43,7 @@ def simulate(robots, width, height, time):
         for robot in robots:
             robot["position"][0] = (robot["position"][0] + robot["velocity"][0]) % width
             robot["position"][1] = (robot["position"][1] + robot["velocity"][1]) % height
+    print(f"Final positions after {time} steps: {[(robot['position'], robot['velocity']) for robot in robots]}")  # Debug print statement
 
 def count_quadrants(robots, width, height):
     """Count the number of robots in each quadrant."""
@@ -62,6 +63,7 @@ def count_quadrants(robots, width, height):
         elif x > mid_x and y > mid_y:
             quadrants["Q4"] += 1
 
+    print(f"Quadrant counts: {quadrants}")  # Debug print statement
     return quadrants
 
 def calculate_safety_factor(quadrants):
