@@ -6,4 +6,4 @@
 ![GitHub License](https://img.shields.io/github/license/bshongwe/swe-study-repo)
 
 This is where I explore and dive into concepts, some elaborate, whilst
-some are just basic examples
+some are just basic examples...
